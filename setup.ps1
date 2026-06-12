@@ -13,7 +13,12 @@
 #>
 #Requires -Version 5.1
 
-$ErrorActionPreference = 'Stop'
+# Deliberately NOT 'Stop' — gh / git / winget write progress and status to
+# stderr (e.g. `gh auth status` prints "You are not logged in…" on exit 1), and
+# under EAP='Stop' Windows PowerShell turns those stderr lines into terminating
+# NativeCommandErrors that a `*> $null` redirect won't suppress, aborting setup.
+# Fatal conditions are handled explicitly via Have / $LASTEXITCODE + `exit 1`.
+$ErrorActionPreference = 'Continue'
 try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
 
